@@ -1,10 +1,11 @@
 extensions [ gis]
-globals [area couleur-route]
+globals [area route-low route-mid route-full]
 
 to setup
   clear-all
   set-area
-  set couleur-route red
+  set  red
+  set route-low green
   if Rail [set-rail]
   if Route [set-route]
 end
@@ -113,7 +114,7 @@ to set-rail
   set area gis:load-dataset "departement-72/railways/railways.shp"
   gis:set-world-envelope-ds gis:envelope-of area
 
-  gis:set-drawing-color cyan
+  gis:set-drawing-color violet
   gis:draw area 1
 end
 @#$#@#$#@

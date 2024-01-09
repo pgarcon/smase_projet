@@ -7,52 +7,63 @@ to setup
   if Route [set-route]
   if Riviere [set-riviere]
   if Rail [set-rail]
-  if Ville [set-nomenclature]
 end
 
 to set-area
-  gis:load-coordinate-system "departement-72/admin-departement.prj"
-  set area gis:load-dataset "departement-72/admin-departement.shp"
+  gis:load-coordinate-system "departement-72/admin/admin-departement.prj"
+  set area gis:load-dataset "departement-72/admin/admin-departement.shp"
   gis:set-world-envelope-ds gis:envelope-of area
 
     gis:set-drawing-color white
     gis:draw area 1
 end
 
-to set-riviere
-  gis:load-coordinate-system "departement-72/autorouteA11/.prj"
-  set area gis:load-dataset "departement-72/autorouteA11/autoroute.shp"
-  gis:set-world-envelope-ds gis:envelope-of area
-
-    gis:set-drawing-color cyan
-    gis:draw area 1
-end
-
 to set-route
-  gis:load-coordinate-system "departement-72/roads.prj"
-  set area gis:load-dataset "departement-72/roads.shp"
+  gis:load-coordinate-system "departement-72/a11/roads.prj"
+  set area gis:load-dataset "departement-72/a11/roads.shp"
   gis:set-world-envelope-ds gis:envelope-of area
 
-    gis:set-drawing-color gray
-    gis:draw area 1
+  gis:set-drawing-color gray
+  gis:draw area 1
+
+  gis:load-coordinate-system "departement-72/a28/roads.prj"
+  set area gis:load-dataset "departement-72/a28/roads.shp"
+  gis:set-world-envelope-ds gis:envelope-of area
+
+  gis:set-drawing-color gray
+  gis:draw area 1
+
+  gis:load-coordinate-system "departement-72/a81/roads.prj"
+  set area gis:load-dataset "departement-72/a81/roads.shp"
+  gis:set-world-envelope-ds gis:envelope-of area
+
+  gis:set-drawing-color gray
+  gis:draw area 1
+
+  gis:load-coordinate-system "departement-72/a11/roads.prj"
+  set area gis:load-dataset "departement-72/a11/roads.shp"
+  gis:set-world-envelope-ds gis:envelope-of area
+
+  gis:set-drawing-color gray
+  gis:draw area 1
+
+  gis:load-coordinate-system "departement-72/lafleche/roads.prj"
+  set area gis:load-dataset "departement-72//roads.shp"
+  gis:set-world-envelope-ds gis:envelope-of area
+
+  gis:set-drawing-color gray
+  gis:draw area 1
 end
+
+
 
 to set-rail
   gis:load-coordinate-system "departement-72/railways.prj"
   set area gis:load-dataset "departement-72/railways.shp"
   gis:set-world-envelope-ds gis:envelope-of area
 
-    gis:set-drawing-color red
-    gis:draw area 1
-end
-
-to set-nomenclature
-  gis:load-coordinate-system "departement-72/places.prj"
-  set area gis:load-dataset "departement-72/places.shp"
-  gis:set-world-envelope-ds gis:envelope-of area
-
-    gis:set-drawing-color white
-    gis:draw area 1
+  gis:set-drawing-color red
+  gis:draw area 1
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -106,7 +117,7 @@ SWITCH
 246
 Riviere
 Riviere
-0
+1
 1
 -1000
 
@@ -485,7 +496,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.3.0
+NetLogo 6.4.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@

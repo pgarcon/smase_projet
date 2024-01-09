@@ -20,8 +20,8 @@ to set-area
 end
 
 to set-riviere
-  gis:load-coordinate-system "departement-72/autorouteA11/roads.prj"
-  set area gis:load-dataset "departement-72/autorouteA11/roads.shp"
+  gis:load-coordinate-system "departement-72/autorouteA11/.prj"
+  set area gis:load-dataset "departement-72/autorouteA11/autoroute.shp"
   gis:set-world-envelope-ds gis:envelope-of area
 
     gis:set-drawing-color cyan
@@ -29,8 +29,8 @@ to set-riviere
 end
 
 to set-route
-  gis:load-coordinate-system "departement-72/autorouteA28/roads.prj"
-  set area gis:load-dataset "departement-72/autorouteA28/roads.shp"
+  gis:load-coordinate-system "departement-72/roads.prj"
+  set area gis:load-dataset "departement-72/roads.shp"
   gis:set-world-envelope-ds gis:envelope-of area
 
     gis:set-drawing-color gray

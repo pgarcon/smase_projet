@@ -9,13 +9,16 @@ globals [
    polution_voiture; polution d'une voiture en circulation
 ]
 
+<<<<<<< HEAD
 ;pour la proportion de personne en train, faire 100 - proportion de personne en voiture
 
 turtles-own [lienRoute etat charge]
+=======
+turtles-own [charge voisins etat route prj]
+>>>>>>> d2dd2793d139fe779171ebf17eda688f6e740526
 
 to setup
   clear-all
-  set-area
   set route-full red
   set route-mid yellow
   set route-low green
@@ -24,7 +27,44 @@ to setup
   set proportion_voiture 80
   set polution_voiture 118; 118 gramme de CO2 par voiture en déplacement
   if Rail [set-rail]
-  if Route [set-route]
+
+  set-turtles
+  set-area
+
+  ask turtles[
+    gis:set-drawing-color etat
+    gis:draw route 1
+  ]
+end
+
+to set-turtles
+  create-turtles 1 ; Créer une tortue
+  [
+    set etat route-low
+    set charge 0
+
+    set prj "departement-72/a11/roads.prj"
+    set route gis:load-dataset "departement-72/a11/roads.shp"
+
+    gis:load-coordinate-system prj
+    gis:set-world-envelope-ds gis:envelope-of route
+
+    set hidden? true
+  ]
+
+  create-turtles 1 ; Créer une tortue
+  [
+    set etat route-low
+    set charge 0
+
+    set prj "departement-72/a28/roads.prj"
+    set route gis:load-dataset "departement-72/a28/roads.shp"
+
+    gis:load-coordinate-system prj
+    gis:set-world-envelope-ds gis:envelope-of route
+
+    set hidden? true
+  ]
 end
 
 to set-area
@@ -32,17 +72,15 @@ to set-area
   set area gis:load-dataset "departement-72/admin/admin-departement.shp"
   gis:set-world-envelope-ds gis:envelope-of area
 
-    gis:set-drawing-color white
-    gis:draw area 1
+  gis:set-drawing-color white
+  gis:draw area 1
 end
 
-to set-route
-  gis:load-coordinate-system "departement-72/a11/roads.prj"
-  set area gis:load-dataset "departement-72/a11/roads.shp"
-  gis:set-world-envelope-ds gis:envelope-of area
+to go
+end
 
-  gis:set-drawing-color route-low
-  gis:draw area 1
+
+to set-route
 
   gis:load-coordinate-system "departement-72/a28/roads.prj"
   set area gis:load-dataset "departement-72/a28/roads.shp"
@@ -191,24 +229,13 @@ Riviere
 -1000
 
 SWITCH
-73
-168
-176
-201
-Route
-Route
-0
-1
--1000
-
-SWITCH
 74
 257
 177
 290
 Rail
 Rail
-0
+1
 1
 -1000
 
@@ -223,6 +250,7 @@ Ville
 1
 -1000
 
+<<<<<<< HEAD
 SLIDER
 1091
 265
@@ -267,6 +295,24 @@ proportion_voiture
 1
 NIL
 HORIZONTAL
+=======
+BUTTON
+182
+90
+257
+123
+Run
+go
+T
+1
+T
+OBSERVER
+NIL
+R
+NIL
+NIL
+1
+>>>>>>> d2dd2793d139fe779171ebf17eda688f6e740526
 
 @#$#@#$#@
 ## WHAT IS IT?

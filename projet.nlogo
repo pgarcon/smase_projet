@@ -1,5 +1,7 @@
 extensions [ gis]
+
 globals [
+  jour
   area
   route-low
   route-mid
@@ -9,33 +11,63 @@ globals [
 
 ;pour la proportion de personne en train, faire 100 - proportion de personne en voiture
 
+; Charge représente la quantité de voiture sur la route
+; Voisins est une liste des routes connexes
+; Etat est la couleur de la route (vert, jaune ou rouge)
+; Route stocke la ligne qui permet de dessiner la route associé à la tortue
+; prj est aussi utilisé pour l'affichage
 turtles-own [charge voisins etat route prj]
 
 to setup
+  ; On reset
   clear-all
+  reset-ticks
+
+  ; Les différents état de la route
   set route-full red
   set route-mid yellow
   set route-low green
+
+  ; Les valeurs à chosir
+  set jour 0
   set population 300000 ;population totale de la Sarthe
   set proportion_deplacement 50
   set proportion_voiture 80
   set polution_voiture 118; 118 gramme de CO2 par voiture en déplacement
+
   if Rail [set-rail]
 
+  ; Création des acteurs du systèmes
   set-turtles
   set-area
 
+  ; Afficher une première fois les routes
   ask turtles[
     gis:set-drawing-color etat
     gis:draw route 1
   ]
 end
 
+; Afficher le contour de la map
+to set-area
+  gis:load-coordinate-system "departement-72/admin/admin-departement.prj"
+  set area gis:load-dataset "departement-72/admin/admin-departement.shp"
+  gis:set-world-envelope-ds gis:envelope-of area
+
+  gis:set-drawing-color white
+  gis:draw area 1
+end
+
+; Créer les tortues
 to set-turtles
+
+  ; Route 0
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
     set charge 0
+
+    set voisins [1 2 3 11]
 
     set prj "departement-72/a11/roads.prj"
     set route gis:load-dataset "departement-72/a11/roads.shp"
@@ -46,10 +78,13 @@ to set-turtles
     set hidden? true
   ]
 
+  ; Route 1
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
     set charge 0
+
+    set voisins [0 5 6 7 8 9 10 11]
 
     set prj "departement-72/a28/roads.prj"
     set route gis:load-dataset "departement-72/a28/roads.shp"
@@ -59,105 +94,179 @@ to set-turtles
 
     set hidden? true
   ]
+
+  ; Route 2
+  create-turtles 1 ; Créer une tortue
+  [
+    set etat route-low
+    set charge 0
+
+    set voisins [0]
+
+    set prj "departement-72/a81/roads.prj"
+    set route gis:load-dataset "departement-72/a81/roads.shp"
+
+    gis:load-coordinate-system prj
+    gis:set-world-envelope-ds gis:envelope-of route
+
+    set hidden? true
+  ]
+
+    ; Route 3
+    create-turtles 1 ; Créer une tortue
+  [
+    set etat route-low
+    set charge 0
+
+    set voisins [0 9]
+
+    set prj "departement-72/belleme/roads.prj"
+    set route gis:load-dataset "departement-72/belleme/roads.shp"
+
+    gis:load-coordinate-system prj
+    gis:set-world-envelope-ds gis:envelope-of route
+
+    set hidden? true
+  ]
+
+   ; Route 4
+   create-turtles 1 ; Créer une tortue
+  [
+    set etat route-low
+    set charge 0
+
+    set voisins [7 9 10 11]
+
+    set prj "departement-72/lafleche/roads.prj"
+    set route gis:load-dataset "departement-72/lafleche/roads.shp"
+
+    gis:load-coordinate-system prj
+    gis:set-world-envelope-ds gis:envelope-of route
+
+    set hidden? true
+  ]
+
+  ; Route 5
+  create-turtles 1 ; Créer une tortue
+  [
+    set etat route-low
+    set charge 0
+
+    set voisins [1 6]
+
+    set prj "departement-72/mamers/roads.prj"
+    set route gis:load-dataset "departement-72/mamers/roads.shp"
+
+    gis:load-coordinate-system prj
+    gis:set-world-envelope-ds gis:envelope-of route
+
+    set hidden? true
+  ]
+
+  ; Route 6
+  create-turtles 1 ; Créer une tortue
+  [
+    set etat route-low
+    set charge 0
+
+    set voisins [1 5]
+
+    set prj "departement-72/mayenne/roads.prj"
+    set route gis:load-dataset "departement-72/mayenne/roads.shp"
+
+    gis:load-coordinate-system prj
+    gis:set-world-envelope-ds gis:envelope-of route
+
+    set hidden? true
+  ]
+
+  ; Route 7
+  create-turtles 1 ; Créer une tortue
+  [
+    set etat route-low
+    set charge 0
+
+    set voisins [1 4 10]
+
+    set prj "departement-72/montVal/roads.prj"
+    set route gis:load-dataset "departement-72/montVal/roads.shp"
+
+    gis:load-coordinate-system prj
+    gis:set-world-envelope-ds gis:envelope-of route
+
+    set hidden? true
+  ]
+
+  ; Route 8
+  create-turtles 1 ; Créer une tortue
+  [
+    set etat route-low
+    set charge 0
+
+    set voisins [1 11]
+
+    set prj "departement-72/orlean/roads.prj"
+    set route gis:load-dataset "departement-72/orlean/roads.shp"
+
+    gis:load-coordinate-system prj
+    gis:set-world-envelope-ds gis:envelope-of route
+
+    set hidden? true
+  ]
+
+  ; Route 9
+  create-turtles 1 ; Créer une tortue
+  [
+    set etat route-low
+    set charge 0
+
+    set voisins [1 3 4 11]
+
+    set prj "departement-72/rocade/roads.prj"
+    set route gis:load-dataset "departement-72/rocade/roads.shp"
+
+    gis:load-coordinate-system prj
+    gis:set-world-envelope-ds gis:envelope-of route
+
+    set hidden? true
+  ]
+
+  ; Route 10
+  create-turtles 1 ; Créer une tortue
+  [
+    set etat route-low
+    set charge 0
+
+    set voisins [1 4 7 11]
+
+    set prj "departement-72/tours/roads.prj"
+    set route gis:load-dataset "departement-72/tours/roads.shp"
+
+    gis:load-coordinate-system prj
+    gis:set-world-envelope-ds gis:envelope-of route
+
+    set hidden? true
+  ]
+
+  ; Route 11
+  create-turtles 1 ; Créer une tortue
+  [
+    set etat route-low
+    set charge 0
+
+    set voisins [0 1 4 8 9 10]
+
+    set prj "departement-72/a111/roads.prj"
+    set route gis:load-dataset "departement-72/a111/roads.shp"
+
+    gis:load-coordinate-system prj
+    gis:set-world-envelope-ds gis:envelope-of route
+
+    set hidden? true
+  ]
 end
 
-to set-area
-  gis:load-coordinate-system "departement-72/admin/admin-departement.prj"
-  set area gis:load-dataset "departement-72/admin/admin-departement.shp"
-  gis:set-world-envelope-ds gis:envelope-of area
-
-  gis:set-drawing-color white
-  gis:draw area 1
-end
-
-to go
-end
-
-
-to set-route
-
-  gis:load-coordinate-system "departement-72/a28/roads.prj"
-  set area gis:load-dataset "departement-72/a28/roads.shp"
-  gis:set-world-envelope-ds gis:envelope-of area
-
-  gis:set-drawing-color route-low
-  gis:draw area 1
-
-  gis:load-coordinate-system "departement-72/a81/roads.prj"
-  set area gis:load-dataset "departement-72/a81/roads.shp"
-  gis:set-world-envelope-ds gis:envelope-of area
-
-  gis:set-drawing-color route-low
-  gis:draw area 1
-
-  gis:load-coordinate-system "departement-72/a11/roads.prj"
-  set area gis:load-dataset "departement-72/a11/roads.shp"
-  gis:set-world-envelope-ds gis:envelope-of area
-
-  gis:set-drawing-color route-low
-  gis:draw area 1
-
-  gis:load-coordinate-system "departement-72/belleme/roads.prj"
-  set area gis:load-dataset "departement-72/belleme/roads.shp"
-  gis:set-world-envelope-ds gis:envelope-of area
-
-  gis:set-drawing-color route-low
-  gis:draw area 1
-
-  gis:load-coordinate-system "departement-72/lafleche/roads.prj"
-  set area gis:load-dataset "departement-72/lafleche/roads.shp"
-  gis:set-world-envelope-ds gis:envelope-of area
-
-  gis:set-drawing-color route-full
-  gis:draw area 1
-
-  gis:load-coordinate-system "departement-72/mamers/roads.prj"
-  set area gis:load-dataset "departement-72/mamers/roads.shp"
-  gis:set-world-envelope-ds gis:envelope-of area
-
-  gis:set-drawing-color route-low
-  gis:draw area 1
-
-  gis:load-coordinate-system "departement-72/mayenne/roads.prj"
-  set area gis:load-dataset "departement-72/mayenne/roads.shp"
-  gis:set-world-envelope-ds gis:envelope-of area
-
-  gis:set-drawing-color route-low
-  gis:draw area 1
-
-  gis:load-coordinate-system "departement-72/montVal/roads.prj"
-  set area gis:load-dataset "departement-72/montVal/roads.shp"
-  gis:set-world-envelope-ds gis:envelope-of area
-
-  gis:set-drawing-color route-low
-  gis:draw area 1
-
-  gis:load-coordinate-system "departement-72/orlean/roads.prj"
-  set area gis:load-dataset "departement-72/orlean/roads.shp"
-  gis:set-world-envelope-ds gis:envelope-of area
-
-  gis:set-drawing-color route-low
-  gis:draw area 1
-
-  gis:load-coordinate-system "departement-72/rocade/roads.prj"
-  set area gis:load-dataset "departement-72/rocade/roads.shp"
-  gis:set-world-envelope-ds gis:envelope-of area
-
-  gis:set-drawing-color route-low
-  gis:draw area 1
-
-  gis:load-coordinate-system "departement-72/tours/roads.prj"
-  set area gis:load-dataset "departement-72/tours/roads.shp"
-  gis:set-world-envelope-ds gis:envelope-of area
-
-  gis:set-drawing-color route-low
-  gis:draw area 1
-
-
-end
-
-
-
+; Afficher les rails
 to set-rail
   gis:load-coordinate-system "departement-72/railways/railways.prj"
   set area gis:load-dataset "departement-72/railways/railways.shp"
@@ -165,6 +274,50 @@ to set-rail
 
   gis:set-drawing-color violet
   gis:draw area 1
+end
+
+; La boucle du main
+to go
+
+  ; Entre 7 heure et 9 heure du matin
+  if ( (ticks mod 120000) = 0 and (ticks >= (120000 * 7) and ticks <= (120000 * 9)))[
+    ask turtles [
+      set charge (charge + (random 80 + 20) )
+    ]
+  ]
+
+  ; Toutes les heures
+  if (ticks mod 120000) = 0 [
+    ask turtles [
+      update
+    ]
+  ]
+
+  ; Reset une journée
+  if ticks = (120000 * 24)[
+   set jour (jour + 1)
+   reset-ticks
+  ]
+
+  tick
+end
+
+; A chaque coup heure passer, l'update des tortues
+to update
+  ifelse charge > 200 [
+    set etat route-full
+  ]
+  [
+    ifelse charge > 100 [
+      set etat route-mid
+    ]
+    [
+      set etat route-low
+    ]
+  ]
+
+  gis:set-drawing-color etat
+  gis:draw route 1
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -248,7 +401,7 @@ population
 population
 100000
 800000
-331840.0
+300000.0
 20
 1
 NIL
@@ -278,11 +431,33 @@ proportion_voiture
 proportion_voiture
 0
 100
-50.0
+80.0
 1
 1
 NIL
 HORIZONTAL
+
+MONITOR
+1225
+132
+1392
+177
+Temps passé
+word (word \"Heures:\" (floor(ticks / 120000))) (word \" , Minutes:\" (floor(ticks / 2000) mod 60))
+17
+1
+11
+
+MONITOR
+1225
+83
+1282
+128
+Jours
+jour
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -626,7 +801,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.3.0
+NetLogo 6.4.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@

@@ -1,6 +1,17 @@
 extensions [ gis]
-globals [area route-low route-mid route-full]
+globals [
+  area
+  route-low
+  route-mid
+  route-full
+   ;Proportion de la population qui se déplace
+   ;Proportion de personne en voiture
+   polution_voiture; polution d'une voiture en circulation
+]
 
+;pour la proportion de personne en train, faire 100 - proportion de personne en voiture
+
+turtles-own [lienRoute etat charge]
 
 to setup
   clear-all
@@ -8,6 +19,10 @@ to setup
   set route-full red
   set route-mid yellow
   set route-low green
+  set population 300000 ;population totale de la Sarthe
+  set proportion_deplacement 50
+  set proportion_voiture 80
+  set polution_voiture 118; 118 gramme de CO2 par voiture en déplacement
   if Rail [set-rail]
   if Route [set-route]
 end
@@ -207,6 +222,51 @@ Ville
 1
 1
 -1000
+
+SLIDER
+1091
+265
+1390
+298
+population
+population
+100000
+800000
+331840.0
+20
+1
+NIL
+HORIZONTAL
+
+SLIDER
+1091
+305
+1391
+338
+proportion_deplacement
+proportion_deplacement
+0
+100
+50.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+1096
+353
+1268
+386
+proportion_voiture
+proportion_voiture
+0
+100
+50.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -550,7 +610,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.4.0
+NetLogo 6.3.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@

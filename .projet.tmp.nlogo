@@ -1,22 +1,16 @@
 extensions [ gis]
 globals [area route-low route-mid route-full]
 
-turtles-own [charge voisins etat route prj]
+turtles-own [charge voisins etat route-draw prj]
 
 to setup
   clear-all
   set route-full red
   set route-mid yellow
   set route-low green
-  if Rail [set-rail]
 
   set-turtles
   set-area
-
-  ask turtles[
-    gis:set-drawing-color etat
-    gis:draw route 1
-  ]
 end
 
 to set-turtles
@@ -26,10 +20,10 @@ to set-turtles
     set charge 0
 
     set prj "departement-72/a11/roads.prj"
-    set route gis:load-dataset "departement-72/a11/roads.shp"
+    set route-draw gis:load-dataset "departement-72/a11/roads.shp"
 
     gis:load-coordinate-system prj
-    gis:set-world-envelope-ds gis:envelope-of route
+    gis:set-world-envelope-ds gis:envelope-of route-draw
 
     set hidden? true
   ]
@@ -40,10 +34,10 @@ to set-turtles
     set charge 0
 
     set prj "departement-72/a28/roads.prj"
-    set route gis:load-dataset "departement-72/a28/roads.shp"
+    set route-draw gis:load-dataset "departement-72/a28/roads.shp"
 
     gis:load-coordinate-system prj
-    gis:set-world-envelope-ds gis:envelope-of route
+    gis:set-world-envelope-ds gis:envelope-of route-draw
 
     set hidden? true
   ]
@@ -56,6 +50,11 @@ to set-area
 
   gis:set-drawing-color white
   gis:draw area 1
+
+  ask turtles[
+    gis:set-drawing-color etat
+    gis:draw route-draw 1
+  ]
 end
 
 to go
@@ -199,39 +198,6 @@ NIL
 NIL
 1
 
-SWITCH
-72
-213
-176
-246
-Riviere
-Riviere
-1
-1
--1000
-
-SWITCH
-74
-257
-177
-290
-Rail
-Rail
-1
-1
--1000
-
-SWITCH
-74
-306
-177
-339
-Ville
-Ville
-1
-1
--1000
-
 BUTTON
 182
 90
@@ -248,6 +214,17 @@ R
 NIL
 NIL
 1
+
+SWITCH
+74
+257
+177
+290
+Rail
+Rail
+1
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?

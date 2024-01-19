@@ -4,18 +4,13 @@ globals [
   route-low
   route-mid
   route-full
-   ;Proportion de la population qui se déplace
-   ;Proportion de personne en voiture
    polution_voiture; polution d'une voiture en circulation
 ]
 
-<<<<<<< HEAD
 ;pour la proportion de personne en train, faire 100 - proportion de personne en voiture
 
 turtles-own [lienRoute etat charge]
-=======
 turtles-own [charge voisins etat route prj]
->>>>>>> d2dd2793d139fe779171ebf17eda688f6e740526
 
 to setup
   clear-all
@@ -250,7 +245,6 @@ Ville
 1
 -1000
 
-<<<<<<< HEAD
 SLIDER
 1091
 265
@@ -295,7 +289,7 @@ proportion_voiture
 1
 NIL
 HORIZONTAL
-=======
+
 BUTTON
 182
 90
@@ -312,7 +306,6 @@ R
 NIL
 NIL
 1
->>>>>>> d2dd2793d139fe779171ebf17eda688f6e740526
 
 @#$#@#$#@
 ## WHAT IS IT?

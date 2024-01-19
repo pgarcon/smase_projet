@@ -7,28 +7,23 @@ globals [
    polution_voiture; polution d'une voiture en circulation
 ]
 
-<<<<<<< HEAD
 turtles-own [charge voisins etat route-draw prj]
-=======
 ;pour la proportion de personne en train, faire 100 - proportion de personne en voiture
 
 turtles-own [lienRoute etat charge]
 turtles-own [charge voisins etat route prj]
->>>>>>> 34cabc2d075d4a8bf92c24c8a69edb54b35e0560
 
 to setup
   clear-all
   set route-full red
   set route-mid yellow
   set route-low green
-<<<<<<< HEAD
-=======
+
   set population 300000 ;population totale de la Sarthe
   set proportion_deplacement 50
   set proportion_voiture 80
   set polution_voiture 118; 118 gramme de CO2 par voiture en déplacement
   if Rail [set-rail]
->>>>>>> 34cabc2d075d4a8bf92c24c8a69edb54b35e0560
 
   set-turtles
   set-area
@@ -219,8 +214,6 @@ NIL
 NIL
 1
 
-<<<<<<< HEAD
-=======
 SWITCH
 72
 213
@@ -299,7 +292,6 @@ proportion_voiture
 NIL
 HORIZONTAL
 
->>>>>>> 34cabc2d075d4a8bf92c24c8a69edb54b35e0560
 BUTTON
 182
 90

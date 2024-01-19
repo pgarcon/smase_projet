@@ -1,6 +1,8 @@
 extensions [ gis]
 globals [area route-low route-mid route-full]
 
+turtles-own [lienRoute etat charge]
+
 to setup
   clear-all
   set-area

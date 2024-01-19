@@ -1,10 +1,12 @@
 extensions [ gis]
 globals [area route-low route-mid route-full]
 
+
 to setup
   clear-all
   set-area
-  set  red
+  set route-full red
+  set route-mid yellow
   set route-low green
   if Rail [set-rail]
   if Route [set-route]
@@ -24,84 +26,84 @@ to set-route
   set area gis:load-dataset "departement-72/a11/roads.shp"
   gis:set-world-envelope-ds gis:envelope-of area
 
-  gis:set-drawing-color couleur-route
+  gis:set-drawing-color route-low
   gis:draw area 1
 
   gis:load-coordinate-system "departement-72/a28/roads.prj"
   set area gis:load-dataset "departement-72/a28/roads.shp"
   gis:set-world-envelope-ds gis:envelope-of area
 
-  gis:set-drawing-color couleur-route
+  gis:set-drawing-color route-low
   gis:draw area 1
 
   gis:load-coordinate-system "departement-72/a81/roads.prj"
   set area gis:load-dataset "departement-72/a81/roads.shp"
   gis:set-world-envelope-ds gis:envelope-of area
 
-  gis:set-drawing-color couleur-route
+  gis:set-drawing-color route-low
   gis:draw area 1
 
   gis:load-coordinate-system "departement-72/a11/roads.prj"
   set area gis:load-dataset "departement-72/a11/roads.shp"
   gis:set-world-envelope-ds gis:envelope-of area
 
-  gis:set-drawing-color couleur-route
+  gis:set-drawing-color route-low
   gis:draw area 1
 
   gis:load-coordinate-system "departement-72/belleme/roads.prj"
   set area gis:load-dataset "departement-72/belleme/roads.shp"
   gis:set-world-envelope-ds gis:envelope-of area
 
-  gis:set-drawing-color couleur-route
+  gis:set-drawing-color route-low
   gis:draw area 1
 
   gis:load-coordinate-system "departement-72/lafleche/roads.prj"
   set area gis:load-dataset "departement-72/lafleche/roads.shp"
   gis:set-world-envelope-ds gis:envelope-of area
 
-  gis:set-drawing-color couleur-route
+  gis:set-drawing-color route-full
   gis:draw area 1
 
   gis:load-coordinate-system "departement-72/mamers/roads.prj"
   set area gis:load-dataset "departement-72/mamers/roads.shp"
   gis:set-world-envelope-ds gis:envelope-of area
 
-  gis:set-drawing-color couleur-route
+  gis:set-drawing-color route-low
   gis:draw area 1
 
   gis:load-coordinate-system "departement-72/mayenne/roads.prj"
   set area gis:load-dataset "departement-72/mayenne/roads.shp"
   gis:set-world-envelope-ds gis:envelope-of area
 
-  gis:set-drawing-color couleur-route
+  gis:set-drawing-color route-low
   gis:draw area 1
 
   gis:load-coordinate-system "departement-72/montVal/roads.prj"
   set area gis:load-dataset "departement-72/montVal/roads.shp"
   gis:set-world-envelope-ds gis:envelope-of area
 
-  gis:set-drawing-color couleur-route
+  gis:set-drawing-color route-low
   gis:draw area 1
 
   gis:load-coordinate-system "departement-72/orlean/roads.prj"
   set area gis:load-dataset "departement-72/orlean/roads.shp"
   gis:set-world-envelope-ds gis:envelope-of area
 
-  gis:set-drawing-color couleur-route
+  gis:set-drawing-color route-low
   gis:draw area 1
 
   gis:load-coordinate-system "departement-72/rocade/roads.prj"
   set area gis:load-dataset "departement-72/rocade/roads.shp"
   gis:set-world-envelope-ds gis:envelope-of area
 
-  gis:set-drawing-color couleur-route
+  gis:set-drawing-color route-low
   gis:draw area 1
 
   gis:load-coordinate-system "departement-72/tours/roads.prj"
   set area gis:load-dataset "departement-72/tours/roads.shp"
   gis:set-world-envelope-ds gis:envelope-of area
 
-  gis:set-drawing-color couleur-route
+  gis:set-drawing-color route-low
   gis:draw area 1
 
 

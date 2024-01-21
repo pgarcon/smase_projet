@@ -24,6 +24,7 @@ to setup
 
   set-turtles
   set-area
+  set-route
 
   ask turtles[
     gis:set-drawing-color etat
@@ -248,7 +249,7 @@ population
 population
 100000
 800000
-331840.0
+408100.0
 20
 1
 NIL
@@ -263,7 +264,7 @@ proportion_deplacement
 proportion_deplacement
 0
 100
-50.0
+45.0
 1
 1
 NIL
@@ -278,7 +279,7 @@ proportion_voiture
 proportion_voiture
 0
 100
-50.0
+66.0
 1
 1
 NIL

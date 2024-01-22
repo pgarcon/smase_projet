@@ -6,7 +6,10 @@ globals [
   route-low
   route-mid
   route-full
+  nb_voiture_sur_route
   polution_voiture; polution d'une voiture en circulation
+  nombre_heure_de_pointe ; nombre de persoone en voiture aux heures creuses
+  nombre_heure_creuse ; nombre de personne en voiture aux heures de pointes
 ]
 
 ;pour la proportion de personne en train, faire 100 - proportion de personne en voiture
@@ -28,19 +31,20 @@ to setup
   set route-mid yellow
   set route-low green
 
+  set nb_voiture_sur_route 0
+
   ; Les valeurs à chosir
   set jour 0
-  set population 300000 ;population totale de la Sarthe
-  set proportion_deplacement 50
-  set proportion_voiture 80
   set polution_voiture 118; 118 gramme de CO2 par voiture en déplacement
+
+  set_proportion_route
 
   if Rail [set-rail]
 
   ; Création des acteurs du systèmes
   set-turtles
   set-area
-  set-route
+  ;set-route
 
   ; Afficher une première fois les routes
   ask turtles[
@@ -66,7 +70,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 0
+    set charge 150
 
     set voisins [1 2 3 11]
 
@@ -83,7 +87,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 0
+    set charge 50
 
     set voisins [0 5 6 7 8 9 10 11]
 
@@ -100,7 +104,8 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 0
+    set charge 50
+
 
     set voisins [0]
 
@@ -117,7 +122,7 @@ to set-turtles
     create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 0
+    set charge 30
 
     set voisins [0 9]
 
@@ -134,7 +139,7 @@ to set-turtles
    create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 0
+    set charge 15
 
     set voisins [7 9 10 11]
 
@@ -151,7 +156,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 0
+    set charge 30
 
     set voisins [1 6]
 
@@ -168,7 +173,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 0
+    set charge 30
 
     set voisins [1 5]
 
@@ -185,7 +190,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 0
+    set charge 40
 
     set voisins [1 4 10]
 
@@ -202,7 +207,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 0
+    set charge 150
 
     set voisins [1 11]
 
@@ -219,7 +224,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 0
+    set charge 500
 
     set voisins [1 3 4 11]
 
@@ -236,7 +241,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 0
+    set charge 250
 
     set voisins [1 4 7 11]
 
@@ -253,7 +258,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 0
+    set charge 150
 
     set voisins [0 1 4 8 9 10]
 
@@ -265,6 +270,8 @@ to set-turtles
 
     set hidden? true
   ]
+
+  calculer_nb_voiture
 end
 
 ; Afficher les rails
@@ -282,14 +289,45 @@ to go
 
   ; Entre 7 heure et 9 heure du matin
   if ( (ticks mod 120000) = 0 and (ticks >= (120000 * 7) and ticks <= (120000 * 9)))[
-    ask turtles [
-      set charge (charge + (random 80 + 20) )
-    ]
+    heure_de_pointe
   ]
+
+  ; Après 9 heure
+  if ((ticks mod 120000) = 0 and ticks > (120000 * 9)) [
+    heure_creuse
+  ]
+
+  ; Entre 12 heure et 14 heure du matin
+  if ( (ticks mod 120000) = 0 and (ticks >= (120000 * 12) and ticks <= (120000 * 14)))[
+    heure_de_pointe
+  ]
+
+  ; Après 14 heure
+  if ((ticks mod 120000) = 0 and ticks > (120000 * 14)) [
+    heure_creuse
+  ]
+
+
+  ; Entre 16 heure et 18 heure du matin
+  if ( (ticks mod 120000) = 0 and (ticks >= (120000 * 16) and ticks <= (120000 * 18)))[
+    heure_de_pointe
+  ]
+
+  ; Après 18 heure
+  if ((ticks mod 120000) = 0 and ticks > (120000 * 18)) [
+    heure_creuse
+  ]
+
+  if (ticks mod 120000) = 0[
+    calculer_nb_voiture
+  ]
+
+
 
   ; Toutes les heures
   if (ticks mod 120000) = 0 [
-    ask turtles [
+    ask turtles[
+      transmettre_charge
       update
     ]
   ]
@@ -305,11 +343,11 @@ end
 
 ; A chaque coup heure passer, l'update des tortues
 to update
-  ifelse charge > 200 [
+  ifelse charge > 100000[
     set etat route-full
   ]
   [
-    ifelse charge > 100 [
+    ifelse charge > 50000 [
       set etat route-mid
     ]
     [
@@ -320,6 +358,219 @@ to update
   gis:set-drawing-color etat
   gis:draw route 1
 end
+
+
+to heure_creuse
+  ; Route 0
+  ask turtle 0 ; Créer une tortue
+  [
+    set etat route-low
+    set charge 300
+  ]
+
+  ; Route 1
+  ask turtle 1 ; Créer une tortue
+  [
+    set etat route-low
+    set charge 50
+  ]
+
+  ; Route 2
+  ask turtle 2 ; Créer une tortue
+  [
+    set etat route-low
+    set charge 50
+  ]
+
+    ; Route 3
+  ask turtle 3 ; Créer une tortue
+  [
+    set etat route-low
+    set charge 30
+  ]
+
+   ; Route 4
+   ask turtle 4 ; Créer une tortue
+  [
+    set etat route-low
+    set charge 15
+  ]
+
+  ; Route 5
+  ask turtle 5 ; Créer une tortue
+  [
+    set etat route-low
+    set charge 30
+  ]
+
+  ; Route 6
+  ask turtle 6 ; Créer une tortue
+  [
+    set etat route-low
+    set charge 30
+  ]
+
+  ; Route 7
+  ask turtle 7 ; Créer une tortue
+  [
+    set etat route-low
+    set charge 40
+  ]
+
+  ; Route 8
+  ask turtle 8 ; Créer une tortue
+  [
+    set etat route-low
+    set charge 150
+  ]
+
+  ; Route 9
+  ask turtle 9 ; Créer une tortue
+  [
+    set etat route-low
+    set charge 500
+  ]
+
+  ; Route 10
+  ask turtle 10 ; Créer une tortue
+  [
+    set etat route-low
+    set charge 250
+  ]
+
+  ; Route 11
+  ask turtle 11 ; Créer une tortue
+  [
+    set etat route-low
+    set charge 150
+  ]
+end
+
+
+
+
+
+
+
+
+to heure_de_pointe
+
+  let nb_1 random nombre_heure_de_pointe
+  let nb_2 random (nombre_heure_de_pointe - nb_1)
+  let nb_3 nombre_heure_de_pointe - nb_2 - nb_1
+
+  show word "rocade :" nb_1
+  show word "a11 :" nb_2
+  show word "a81 :" nb_3
+
+  ask turtle 0[
+      set charge nb_3
+    ]
+
+    ask turtle 1[
+      set charge nb_2
+    ]
+
+    ask turtle 9[
+      set charge nb_1
+    ]
+end
+
+
+
+
+
+
+to transmettre_charge
+  let charge_en_moins 0
+  let charge_tot 0
+
+  ifelse etat = route-full[
+    set charge_en_moins random 3000 + 8000
+  ][
+    if etat = route-mid[
+      set charge_en_moins random 20 + 30
+    ]
+  ]
+
+  ; On envoie les charges aux autres routes
+  ; pour chaque rouets voisines
+  ;    on prend aléatoirement une quantité de véhicule à enlever
+  ;    on enlève la charge
+  ;    on garde en mémoire le nombre de véhicule enlevé pour plus tard
+  ;    on retire les véhicule enlever de la charge actuelle de la route
+  foreach voisins [
+      x -> ask turtle x [
+        let nb random charge_en_moins
+        set charge (charge + charge_en_moins) ;on ajoute la charge au autres routes
+        set charge_tot charge_tot + nb
+        set charge_en_moins charge_en_moins - nb
+      ]
+    ]
+
+
+  ; on Supprime les charges de la route actuelle
+  set charge charge - charge_tot
+end
+
+
+to set_proportion_route
+  set nombre_heure_de_pointe population * proportion_deplacement / 100
+  set nombre_heure_creuse population * 10 / 100 ; 10% de personnes sur les routes en heures creuses
+
+  show nombre_heure_de_pointe
+  show nombre_heure_creuse
+end
+
+to calculer_nb_voiture
+  set nb_voiture_sur_route 0
+  ask turtles [
+    set nb_voiture_sur_route nb_voiture_sur_route + charge
+  ]
+end
+
+; Stocker le nombre de personne sur la route, et calculer la polution
+to polution
+  plot nb_voiture_sur_route * polution_voiture
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @#$#@#$#@
 GRAPHICS-WINDOW
 350
@@ -417,7 +668,7 @@ proportion_deplacement
 proportion_deplacement
 0
 100
-45.0
+50.0
 1
 1
 NIL
@@ -459,6 +710,24 @@ jour
 17
 1
 11
+
+PLOT
+1090
+410
+1574
+732
+polution
+temps
+taux de CO2
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "polution"
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -802,7 +1071,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.4.0
+NetLogo 6.3.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@

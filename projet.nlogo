@@ -70,7 +70,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 150
+    set charge 150 * proportion_deplacement
 
     set voisins [1 2 3 11]
 
@@ -87,7 +87,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 50
+    set charge 50 * proportion_deplacement
 
     set voisins [0 5 6 7 8 9 10 11]
 
@@ -104,7 +104,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 50
+    set charge 50 * proportion_deplacement
 
 
     set voisins [0]
@@ -122,7 +122,7 @@ to set-turtles
     create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 30
+    set charge 30 * proportion_deplacement
 
     set voisins [0 9]
 
@@ -139,7 +139,7 @@ to set-turtles
    create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 15
+    set charge 15 * proportion_deplacement
 
     set voisins [7 9 10 11]
 
@@ -156,7 +156,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 30
+    set charge 30 * proportion_deplacement
 
     set voisins [1 6]
 
@@ -173,7 +173,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 30
+    set charge 30 * proportion_deplacement
 
     set voisins [1 5]
 
@@ -190,7 +190,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 40
+    set charge 40 * proportion_deplacement
 
     set voisins [1 4 10]
 
@@ -207,7 +207,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 150
+    set charge 150 * proportion_deplacement
 
     set voisins [1 11]
 
@@ -224,7 +224,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 500
+    set charge 500 * proportion_deplacement
 
     set voisins [1 3 4 11]
 
@@ -241,7 +241,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 250
+    set charge 250 * proportion_deplacement
 
     set voisins [1 4 7 11]
 
@@ -258,7 +258,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 150
+    set charge 150 * proportion_deplacement
 
     set voisins [0 1 4 8 9 10]
 
@@ -284,52 +284,39 @@ to set-rail
   gis:draw area 1
 end
 
-; La boucle du main
+;la boucle main
 to go
-
-  ; Entre 7 heure et 9 heure du matin
-  if ( (ticks mod 120000) = 0 and (ticks >= (120000 * 7) and ticks <= (120000 * 9)))[
-    heure_de_pointe
+  ; Entre 7 heure et 9 heure, 12 heure et 14 heure 16 heure et 18 heure
+  ifelse ((ticks >= (120000 * 7) and ticks <= (120000 * 9)) or (ticks >= (120000 * 12) and ticks <= (120000 * 14)) or (ticks >= (120000 * 16) and ticks <= (120000 * 18))) [
+    ifelse (ticks mod 120000) = 0 [
+      heure_de_pointe
+    ]
+    [
+      if (ticks mod 60000) = 0 and ((ticks <= (120000 * 7) or ticks < (120000 * 12) or ticks < (120000 * 16))) [
+        show "transition max"
+        transition_max
+        calculer_nb_voiture
+      ]
+    ]
+  ]
+  [
+    if (ticks mod 120000) = 0[
+      heure_creuse
+      if (ticks mod 60000) = 0 [
+        transition_min
+        calculer_nb_voiture
+      ]
+    ]
   ]
 
-  ; Après 9 heure
-  if ((ticks mod 120000) = 0 and ticks > (120000 * 9)) [
-    heure_creuse
-  ]
-
-  ; Entre 12 heure et 14 heure du matin
-  if ( (ticks mod 120000) = 0 and (ticks >= (120000 * 12) and ticks <= (120000 * 14)))[
-    heure_de_pointe
-  ]
-
-  ; Après 14 heure
-  if ((ticks mod 120000) = 0 and ticks > (120000 * 14)) [
-    heure_creuse
-  ]
-
-
-  ; Entre 16 heure et 18 heure du matin
-  if ( (ticks mod 120000) = 0 and (ticks >= (120000 * 16) and ticks <= (120000 * 18)))[
-    heure_de_pointe
-  ]
-
-  ; Après 18 heure
-  if ((ticks mod 120000) = 0 and ticks > (120000 * 18)) [
-    heure_creuse
-  ]
-
-  if (ticks mod 120000) = 0[
-    calculer_nb_voiture
-  ]
-
-
-
-  ; Toutes les heures
-  if (ticks mod 120000) = 0 [
+  ; Toutes les 30 minutes
+  if (ticks mod 60000) = 0 [
     ask turtles[
+      random_transition
       transmettre_charge
       update
     ]
+    calculer_nb_voiture
   ]
 
   ; Reset une journée
@@ -340,6 +327,7 @@ to go
 
   tick
 end
+
 
 ; A chaque coup heure passer, l'update des tortues
 to update
@@ -359,97 +347,34 @@ to update
   gis:draw route 1
 end
 
+to random_transition
+  let cond random 20
 
-to heure_creuse
-  ; Route 0
-  ask turtle 0 ; Créer une tortue
-  [
-    set etat route-low
-    set charge 300
-  ]
+  show word "condition : " cond
 
-  ; Route 1
-  ask turtle 1 ; Créer une tortue
-  [
-    set etat route-low
-    set charge 50
-  ]
-
-  ; Route 2
-  ask turtle 2 ; Créer une tortue
-  [
-    set etat route-low
-    set charge 50
-  ]
-
-    ; Route 3
-  ask turtle 3 ; Créer une tortue
-  [
-    set etat route-low
-    set charge 30
-  ]
-
-   ; Route 4
-   ask turtle 4 ; Créer une tortue
-  [
-    set etat route-low
-    set charge 15
-  ]
-
-  ; Route 5
-  ask turtle 5 ; Créer une tortue
-  [
-    set etat route-low
-    set charge 30
-  ]
-
-  ; Route 6
-  ask turtle 6 ; Créer une tortue
-  [
-    set etat route-low
-    set charge 30
-  ]
-
-  ; Route 7
-  ask turtle 7 ; Créer une tortue
-  [
-    set etat route-low
-    set charge 40
-  ]
-
-  ; Route 8
-  ask turtle 8 ; Créer une tortue
-  [
-    set etat route-low
-    set charge 150
-  ]
-
-  ; Route 9
-  ask turtle 9 ; Créer une tortue
-  [
-    set etat route-low
-    set charge 500
-  ]
-
-  ; Route 10
-  ask turtle 10 ; Créer une tortue
-  [
-    set etat route-low
-    set charge 250
-  ]
-
-  ; Route 11
-  ask turtle 11 ; Créer une tortue
-  [
-    set etat route-low
-    set charge 150
+  ifelse cond >= 10[
+    set charge charge + (random 800 * proportion_deplacement)
+  ][
+    set charge charge - (random 800 * proportion_deplacement)
   ]
 end
 
 
+to heure_creuse
+  let charges-initiales [300 50 50 30 15 30 30 40 150 500 250 150]
 
+  let valeurs (map [ [x] -> x * proportion_deplacement ] charges-initiales)
 
+  show valeurs
 
+  foreach (range length valeurs) [
+    i ->
+    ask turtle i [
+      set etat route-low
+      set charge item i valeurs
+    ]
+  ]
+end
 
 
 
@@ -464,21 +389,59 @@ to heure_de_pointe
   show word "a81 :" nb_3
 
   ask turtle 0[
-      set charge nb_3
+      set charge nb_3 * proportion_deplacement
+      update
     ]
 
     ask turtle 1[
-      set charge nb_2
+      set charge nb_2 * proportion_deplacement
+      update
     ]
 
     ask turtle 9[
-      set charge nb_1
+      set charge nb_1 * proportion_deplacement
+      update
     ]
 end
 
 
+to transition_min
+  let nb_1 random 1000
+  let nb_2 random 500
+  let nb_3 random 400
+
+  ask turtle 0[
+      set charge charge -  (nb_3 * proportion_deplacement)
+    ]
+
+    ask turtle 1[
+      set charge charge - (nb_2 * proportion_deplacement )
+    ]
+
+    ask turtle 9[
+      set charge charge - ( nb_1 * proportion_deplacement)
+    ]
+end
 
 
+to transition_max
+
+  let nb_1 random 800
+  let nb_2 random 600
+  let nb_3 random 500
+
+  ask turtle 0[
+      set charge charge +  ( nb_3 * proportion_deplacement )
+    ]
+
+    ask turtle 1[
+      set charge charge + ( nb_2 * proportion_deplacement )
+    ]
+
+    ask turtle 9[
+      set charge charge + ( nb_1 * proportion_deplacement )
+    ]
+end
 
 
 to transmettre_charge
@@ -499,14 +462,18 @@ to transmettre_charge
   ;    on enlève la charge
   ;    on garde en mémoire le nombre de véhicule enlevé pour plus tard
   ;    on retire les véhicule enlever de la charge actuelle de la route
-  foreach voisins [
+
+  if charge_en_moins > 0[
+    foreach voisins [
       x -> ask turtle x [
         let nb random charge_en_moins
-        set charge (charge + charge_en_moins) ;on ajoute la charge au autres routes
-        set charge_tot charge_tot + nb
         set charge_en_moins charge_en_moins - nb
       ]
     ]
+    set charge (charge + sum [random charge_en_moins] of turtles with [charge_en_moins > 0])
+    set charge_tot (charge_tot + sum [random charge_en_moins] of turtles with [charge_en_moins > 0])
+  ]
+
 
 
   ; on Supprime les charges de la route actuelle
@@ -523,17 +490,13 @@ to set_proportion_route
 end
 
 to calculer_nb_voiture
-  set nb_voiture_sur_route 0
-  ask turtles [
-    set nb_voiture_sur_route nb_voiture_sur_route + charge
-  ]
+  set nb_voiture_sur_route sum [charge] of turtles
 end
 
 ; Stocker le nombre de personne sur la route, et calculer la polution
 to polution
   plot nb_voiture_sur_route * polution_voiture
 end
-
 
 
 
@@ -653,7 +616,7 @@ population
 population
 100000
 800000
-300000.0
+151760.0
 20
 1
 NIL
@@ -668,7 +631,7 @@ proportion_deplacement
 proportion_deplacement
 0
 100
-50.0
+6.0
 1
 1
 NIL

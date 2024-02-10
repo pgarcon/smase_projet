@@ -508,6 +508,7 @@ end
 
 ; Stocker le nombre de personne sur la route, et calculer la polution
 to polution
+
   plot (nb_voiture_sur_route * polution_voiture) / 1000000
 end
 
@@ -702,7 +703,7 @@ true
 false
 "" ""
 PENS
-"default" 1.0 0 -16777216 true "" "polution"
+"default" 1.0 1 -16777216 true "" "polution"
 
 SLIDER
 374

@@ -16,6 +16,7 @@ globals [
 ;https://fr.statista.com/statistiques/995622/distance-moyenne-parcourue-francais-trajet-quotidien/
 ;https://carlabelling.ademe.fr/chiffrescles/r/moyenneEmissionCo2Gamme
 ;https://www.insee.fr/fr/statistiques/1405599?geo=DEP-72
+;https://shs.hal.science/halshs-03109350/document
 
 
 ;pour la proportion de personne en train, faire 100 - proportion de personne en voiture
@@ -78,7 +79,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 150 * proportion_deplacement
+    set charge proportion_deplacement * 0.15
 
     set voisins [1 2 3 11]
 
@@ -95,7 +96,8 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 50 * proportion_deplacement
+    set charge proportion_deplacement * 0.15
+
 
     set voisins [0 5 6 7 8 9 10 11]
 
@@ -112,7 +114,8 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 50 * proportion_deplacement
+    set charge proportion_deplacement * 0.15
+
 
 
     set voisins [0]
@@ -130,7 +133,8 @@ to set-turtles
     create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 30 * proportion_deplacement
+    set charge proportion_deplacement * 0.07
+
 
     set voisins [0 9]
 
@@ -147,7 +151,8 @@ to set-turtles
    create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 15 * proportion_deplacement
+    set charge proportion_deplacement * 0.07
+
 
     set voisins [7 9 10 11]
 
@@ -164,7 +169,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 30 * proportion_deplacement
+    set charge proportion_deplacement * 0.07
 
     set voisins [1 6]
 
@@ -181,7 +186,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 30 * proportion_deplacement
+    set charge proportion_deplacement * 0.05
 
     set voisins [1 5]
 
@@ -198,7 +203,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 40 * proportion_deplacement
+    set charge proportion_deplacement * 0.05
 
     set voisins [1 4 10]
 
@@ -215,7 +220,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 150 * proportion_deplacement
+    set charge proportion_deplacement * 0.07
 
     set voisins [1 11]
 
@@ -232,7 +237,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 500 * proportion_deplacement
+    set charge proportion_deplacement * 0.05
 
     set voisins [1 3 4 11]
 
@@ -249,7 +254,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 250 * proportion_deplacement
+    set charge proportion_deplacement * 0.07
 
     set voisins [1 4 7 11]
 
@@ -266,7 +271,7 @@ to set-turtles
   create-turtles 1 ; Créer une tortue
   [
     set etat route-low
-    set charge 150 * proportion_deplacement
+    set charge proportion_deplacement * 0.05
 
     set voisins [0 1 4 8 9 10]
 
@@ -300,29 +305,31 @@ to go
   let newDemiHeure (ticks mod 60000)
 
   ; Entre 7 heure et 9 heure, 12 heure et 14 heure 16 heure et 18 heure, on applique la procédure 'heure de pointe"
-  ifelse ((heure >= 7 and heure <= 9) or (heure >= 12 and heure <= 14) or (heure >= 16 and heure <= 20)) [
+  ifelse ((heure >= 7 and heure <= 9) or (heure >= 12 and heure <= 13) or (heure >= 16 and heure <= 20)) [
     ifelse newHeure = 0 [
       heure_de_pointe
     ]
     [
       if newDemiHeure = 0 and ((heure <= 7) or (heure < 12) or (heure < 16)) [
-        show "transition max"
+        ;show "transition max"
         transition_max
         calculer_nb_voiture
       ]
     ]
   ]
-
   ;Les heures creuses
   [
     if newHeure = 0[
       heure_creuse
+      if (heure >= 23 or heure <= 4)[
+        heure_nuit
+      ]
       if newDemiHeure = 0 [
         transition_min
         calculer_nb_voiture
       ]
     ]
-  ]
+    ]
 
   ; Toutes les 30 minutes
   if newDemiHeure = 0 [
@@ -346,11 +353,11 @@ end
 
 ; A chaque coup heure passer, l'update des routes
 to update
-  ifelse charge > 100000[
+  ifelse charge > 0.9 [
     set etat route-full
   ]
   [
-    ifelse charge > 50000 [
+    ifelse charge > 0.6 [
       set etat route-mid
     ]
     [
@@ -365,22 +372,36 @@ end
 to random_transition
   let cond random 20
 
-  show word "condition : " cond
-
   ifelse cond >= 10[
-    set charge charge + (random 800 * proportion_deplacement)
+    set charge charge + (( random 10 / 100 ) * proportion_deplacement / 100)
   ][
-    set charge charge - (random 800 * proportion_deplacement)
+    set charge charge - (( random 10 / 100 ) * proportion_deplacement / 100)
   ]
 end
 
 
 to heure_creuse
-  let charges-initiales [300 50 50 30 15 30 30 40 150 500 250 150]
+  let charges-initiales [0.15 0.15 0.15 0.07 0.07 0.07 0.07 0.07 0.05 0.05 0.05 0.05]
 
-  let valeurs (map [ [x] -> x * proportion_deplacement ] charges-initiales)
+  let valeurs (map [ [x] -> x * proportion_deplacement / 100 ] charges-initiales)
 
-  show valeurs
+  ;show valeurs
+
+  foreach (range length valeurs) [
+    i ->
+    ask turtle i [
+      set etat route-low
+      set charge item i valeurs
+    ]
+  ]
+end
+
+to heure_nuit
+  let charges-initiales [0.02 0.02 0.02 0.01 0.01 0.01 0.00 0.00 0.00 0.00 0.00 0.01]
+
+  let valeurs (map [ [x] -> x * proportion_deplacement / 100 ] charges-initiales)
+
+  ;show valeurs
 
   foreach (range length valeurs) [
     i ->
@@ -395,66 +416,68 @@ end
 
 to heure_de_pointe
 
-  let nb_1 random nombre_heure_de_pointe
-  let nb_2 random (nombre_heure_de_pointe - nb_1)
-  let nb_3 nombre_heure_de_pointe - nb_2 - nb_1
+  let nb_1 random (nombre_heure_de_pointe * 100)
+  let nb_2 random ((nombre_heure_de_pointe * 100) - nb_1)
+  let nb_3 (nombre_heure_de_pointe * 100) - nb_2 - nb_1
 
-  show word "rocade :" nb_1
-  show word "a11 :" nb_2
-  show word "a81 :" nb_3
+  ;show word "nombre heure de pointe : " (nombre_heure_de_pointe * 100)
+  ;show word "rocade :" (nb_1 / 100.0)
+  ;show word "a11 :" (nb_2 / 100.0)
+  ;show word "a81 :" (nb_3 / 100.0)
 
   ask turtle 0[
-      set charge nb_3 * proportion_deplacement
+      set charge 0.7 + nb_3 / 100.0 * proportion_deplacement / 100
+      ;show word "value :" charge
       update
     ]
 
     ask turtle 1[
-      set charge nb_2 * proportion_deplacement
+      set charge 0.7 + nb_2 / 100.0 * proportion_deplacement / 100
       update
     ]
 
     ask turtle 9[
-      set charge nb_1 * proportion_deplacement
+      set charge 0.90 + nb_1 / 100.0 * proportion_deplacement / 100
       update
     ]
 end
 
 
 to transition_min
-  let nb_1 random 1000
-  let nb_2 random 500
-  let nb_3 random 400
+  let nb_1 random 8 / 100
+  let nb_2 random 2 / 100
+  let nb_3 random 2 / 100
 
   ask turtle 0[
-      set charge charge -  (nb_3 * proportion_deplacement)
+      set charge charge -  (nb_3 * proportion_deplacement / 100)
     ]
 
     ask turtle 1[
-      set charge charge - (nb_2 * proportion_deplacement )
+      set charge charge - (nb_2 * proportion_deplacement / 100 )
     ]
 
     ask turtle 9[
-      set charge charge - ( nb_1 * proportion_deplacement)
+      set charge charge - ( nb_1 * proportion_deplacement / 100)
     ]
 end
 
 
 to transition_max
 
-  let nb_1 random 800
-  let nb_2 random 600
-  let nb_3 random 500
+  let nb_1 random 5 / 100
+  let nb_2 random 2 / 100
+  let nb_3 random 2 / 100
 
   ask turtle 0[
-      set charge charge +  ( nb_3 * proportion_deplacement )
+      set charge charge +  ( nb_3 * proportion_deplacement / 100 )
     ]
 
     ask turtle 1[
-      set charge charge + ( nb_2 * proportion_deplacement )
+      set charge charge + ( nb_2 * proportion_deplacement / 100 )
     ]
 
     ask turtle 9[
-      set charge charge + ( nb_1 * proportion_deplacement )
+      set charge charge + ( nb_1 * proportion_deplacement / 100 )
     ]
 end
 
@@ -464,10 +487,10 @@ to transmettre_charge
   let charge_tot 0
 
   ifelse etat = route-full[
-    set charge_en_moins random 3000 + 8000
+    set charge_en_moins random 5 + 15
   ][
     if etat = route-mid[
-      set charge_en_moins random 20 + 30
+      set charge_en_moins random 2 + 5
     ]
   ]
 
@@ -483,9 +506,9 @@ to transmettre_charge
       x -> ask turtle x [
         let nb random charge_en_moins
         set charge_en_moins charge_en_moins - nb
+        set charge charge + (nb / 100)
       ]
     ]
-    set charge (charge + sum [random charge_en_moins] of turtles with [charge_en_moins > 0])
     set charge_tot (charge_tot + sum [random charge_en_moins] of turtles with [charge_en_moins > 0])
   ]
 
@@ -495,22 +518,21 @@ end
 
 
 to set_proportion_route
-  set nombre_heure_de_pointe (population * proportion_deplacement / 100)
-  set nombre_heure_creuse (population * 5 / 100) ; 5% de personnes sur les routes en heures creuses
+  set nombre_heure_de_pointe ((population * proportion_deplacement) / population) / 100
+  set nombre_heure_creuse ((population * 5.0 / 100.0) / population) / 100 ; 5% de personnes sur les routes en heures creuses
 
-  show nombre_heure_de_pointe
-  show nombre_heure_creuse
+  ;show word "heure de pointe : " nombre_heure_de_pointe
+  ;show word "heure creuse : "nombre_heure_creuse
 end
 
 to calculer_nb_voiture
-  set nb_voiture_sur_route sum [charge] of turtles
+  set nb_voiture_sur_route sum [charge * proportion_deplacement * population ] of turtles
 end
 
 ; Stocker le nombre de personne sur la route, et calculer la polution
 to polution
-  plot (nb_voiture_sur_route * polution_voiture) / 1000000
+  plot (nb_voiture_sur_route * polution_voiture) / 10000000
 end
-
 
 
 
@@ -628,7 +650,7 @@ population
 population
 100000
 800000
-560000.0
+700000.0
 10000
 1
 habitants
@@ -643,7 +665,7 @@ proportion_deplacement
 proportion_deplacement
 0
 100
-20.0
+100.0
 1
 1
 %
@@ -652,13 +674,13 @@ HORIZONTAL
 SLIDER
 375
 265
-547
+676
 298
 proportion_voiture
 proportion_voiture
 0
 100
-80.0
+100.0
 1
 1
 %
@@ -707,13 +729,13 @@ PENS
 SLIDER
 374
 141
-563
+671
 174
 distance_trajet_moyen
 distance_trajet_moyen
-0
+1
 50
-12.0
+27.0
 2
 1
 km
@@ -722,54 +744,58 @@ HORIZONTAL
 SLIDER
 374
 101
-633
+670
 134
 consomation_co2_moyen
 consomation_co2_moyen
 0
 500
-80.0
+20.0
 10
 1
 g/km de co2
 HORIZONTAL
 
 @#$#@#$#@
-## WHAT IS IT?
+## Le but du projet
 
-(a general understanding of what the model is trying to show or explain)
+Ce projet à pour but de simuler les principales routes de la Sarthe et de visualiser l'évolution de la polution en fonction de plusieurs paramètres que l'on peut modifier
 
-## HOW IT WORKS
+## Comment ça marche
 
-(what rules the agents use to create the overall behavior of the model)
+Chaque route est un agent. Elle modifie sa couleur en fonction de nombre de personne qui circule dessus. 
+les routes calculent leur polution en fonction du nombr de véhicules qui circulent dessus.
 
-## HOW TO USE IT
+## Comment l'utiliser
 
-(how to use the model, including a description of each of the items in the Interface tab)
+On peut modifier différents paramètres pour voir les différentes évolutions : 
 
-## THINGS TO NOTICE
+* Le nombre de personnes en Sarthe
+* La proportion de la population qui utilise la voiture
+* La proportion de personne qui se déplace (ceux qui utilisent leur voiture)
+* La polution d'une voiture
+* La distance parcourue par les voitures
 
-(suggested things for the user to notice while running the model)
+## Chose à essayer
 
-## THINGS TO TRY
+Ne pas hésiter à essayer les extrêmes pour voir les impacts sur la polution. Par exemple, que se passe-t-il si 100% des gens prennent leur voiture pour faire 1 km ?
 
-(suggested things for the user to try to do (move sliders, switches, etc.) with the model)
+## Améliorations
 
-## EXTENDING THE MODEL
+Pour améliorer la simulation, il faudrait prendre en compte plus de paramètres : 
 
-(suggested things to add or change in the Code tab to make the model more complicated, detailed, accurate, etc.)
+* les différents types de véhicules (poids lourd, vehicules électriques, 4x4...)
+* Plus de routes
+* Ajouter des transport en commun (bus)
+* Utiliser des données de départ réelles
 
-## NETLOGO FEATURES
 
-(interesting or unusual features of NetLogo that the model uses, particularly in the Code tab; or where workarounds were needed for missing features)
+## Références
 
-## RELATED MODELS
-
-(models in the NetLogo Models Library and elsewhere which are of related interest)
-
-## CREDITS AND REFERENCES
-
-(a reference to the model's URL on the web if it has one, as well as any other necessary credits, citations, and links)
+* https://fr.statista.com/statistiques/995622/distance-moyenne-parcourue-francais-trajet-quotidien/
+* https://carlabelling.ademe.fr/chiffrescles/r/moyenneEmissionCo2Gamme
+* https://www.insee.fr/fr/statistiques/1405599?geo=DEP-72
+* https://shs.hal.science/halshs-03109350/document
 @#$#@#$#@
 default
 true
